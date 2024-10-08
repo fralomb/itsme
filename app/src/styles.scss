@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary-light: #E6F1FF;
+    --color-primary-dark: #212529;
+    --color-secondary-light: #155084;
+    --color-secondary-light-hover: #0078a5;
+    --color-secondary-dark: #87A8A8;
+    --color-secondary-dark-hover: #547474;
+    --color-accent-light: #155084;
+    --color-accent-dark: #87A8A8;
+
+  }
+}
