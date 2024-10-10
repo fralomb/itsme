@@ -15,6 +15,8 @@ module.exports = {
         sign: ["Babylonica", "cursive"],
       },
       colors: {
+        'main-light-hover': 'var(--color-secondary-light-hover)',
+        'main-dark-hover': 'var(--color-secondary-dark-hover)',
         'main-light': 'var(--color-secondary-light)',
         'main-dark': 'var(--color-secondary-dark)',
         'bg-light': 'var(--color-primary-light)',

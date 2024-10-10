@@ -1,0 +1,17 @@
+.wrapper {
+  @apply flex flex-col gap-3 items-center;
+}
+
+.contacts {
+  @apply flex flex-row gap-7;
+}
+
+.contacts > a > svg {
+  height: 28px;
+  width: 28px;
+}
+
+.copyright {
+  @apply text-xs;
+}
+

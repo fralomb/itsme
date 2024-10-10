@@ -1,13 +1,12 @@
 .wrapper {
-  @apply flex m-auto h-20 items-center;
+  @apply flex m-auto items-center;
 }
 
 .logo {
-  @apply font-sign text-5xl mx-10 flex-grow text-main-light dark:text-main-dark;
+  @apply font-sign text-5xl flex-grow;
 }
 
 .theme-toggle {
-  @apply mx-10;
   --icon-fill-moon: var(--color-secondary-light);
   --icon-fill-moon-hover: var(--color-secondary-light-hover);
   --icon-fill-sun: var(--color-secondary-dark);
