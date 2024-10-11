@@ -1,5 +1,5 @@
 .wrapper {
-  @apply flex flex-col px-10 bg-bg-light dark:bg-bg-dark text-main-light dark:text-main-dark h-dvh;
+  @apply flex flex-col px-10 bg-bg-light dark:bg-bg-dark text-main-light dark:text-main-dark min-h-dvh;
 
   .nav {
     @apply my-6;
@@ -10,6 +10,6 @@
   }
 
   .footer {
-    @apply my-3;
+    @apply mt-20 mb-3;
   }
 }
