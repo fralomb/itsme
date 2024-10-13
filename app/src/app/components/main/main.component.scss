@@ -16,5 +16,39 @@
   strong {
     @apply font-bold;
   }
+}
 
+.line-1 {
+  white-space: nowrap;
+  overflow: hidden;
+  letter-spacing: .15em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @mixin caret($color, $keyframe) {
+    content: '';
+    opacity: .75;
+    border-right: .30em solid $color;
+    animation: $keyframe .75s step-end infinite;
+  }
+
+  .line-1::after {
+    @include caret(var(--color-secondary-light), "blink-caret-light")
+  }
+
+  :host-context(.dark) {
+    .line-1::after {
+      @include caret(var(--color-secondary-dark), "blink-caret-dark")
+    }
+  }
+
+  @keyframes blink-caret-dark {
+    from, to { border-color: transparent }
+    50% { border-color: var(--color-secondary-dark); }
+  }
+
+  @keyframes blink-caret-light {
+    from, to { border-color: transparent }
+    50% { border-color: var(--color-secondary-light); }
+  }
 }
