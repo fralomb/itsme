@@ -5,19 +5,30 @@
 .contacts {
   @apply flex flex-row gap-7;
 
-  /* for email and linkedin */
-  svg:is(:hover, :focus-visible) > #iconCarrier > path:first-of-type {
-    fill: var(--color-secondary-light-hover)
+  svg {
+    height: 28px;
+    width: 28px;
   }
-  /* for github */
-  svg:is(:hover, :focus-visible) > #iconCarrier > #github > #container > #mask {
-    fill: var(--color-secondary-light-hover)
+  :host-context(.dark) {
+    /* for email and linkedin */
+    svg:is(:hover) > #iconCarrier > path:first-of-type {
+      fill: var(--color-secondary-dark-hover)
+    }
+    /* for github */
+    svg:is(:hover) > #iconCarrier > #github > #container > #mask {
+      fill: var(--color-secondary-dark-hover)
+    }
   }
-}
-
-.contacts > a > svg {
-  height: 28px;
-  width: 28px;
+  :host-context(.light) {
+    /* for email and linkedin */
+    svg:is(:hover) > #iconCarrier > path:first-of-type {
+      fill: var(--color-secondary-light-hover)
+    }
+    /* for github */
+    svg:is(:hover) > #iconCarrier > #github > #container > #mask {
+      fill: var(--color-secondary-light-hover)
+    }
+  }
 }
 
 .copyright {

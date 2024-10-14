@@ -22,15 +22,15 @@
 }
 
 :host-context(.dark) {
-  .sun-and-moon > :is(.moon, .sun) {
+  .sun-and-moon > .sun {
     fill: var(--icon-fill-sun);
   }
 
-  .sun-and-moon:is(:hover, :focus-visible) > :is(.moon, .sun) {
+  .sun-and-moon:is(:hover) > .sun {
     fill: var(--icon-fill-sun-hover);
   }
 
-  .sun-and-moon:is(:hover, :focus-visible) > .sun-beams {
+  .sun-and-moon:is(:hover) > .sun-beams {
     stroke: var(--icon-fill-sun-hover);
   }
 
@@ -41,11 +41,11 @@
 }
 
 :host-context(.light) {
-  .sun-and-moon > :is(.moon, .sun) {
+  .sun-and-moon > .sun {
     fill: var(--icon-fill-moon);
   }
 
-  .sun-and-moon:is(:hover, :focus-visible) > :is(.moon, .sun) {
+  .sun-and-moon:is(:hover) > .sun {
     fill: var(--icon-fill-moon-hover);
   }
 
