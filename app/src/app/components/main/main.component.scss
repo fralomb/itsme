@@ -18,10 +18,15 @@
   }
 }
 
-.line-1 {
-  white-space: nowrap;
-  overflow: hidden;
+.line-1, .line-2, .line-3, .line-4, .line-5 {
   letter-spacing: .15em;
+  display: none;
+}
+
+.typewrite_ongoing {
+  /* white-space: nowrap; */
+  /* overflow: hidden; */
+  display: initial;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -32,14 +37,18 @@
     animation: $keyframe .75s step-end infinite;
   }
 
-  .line-1::after {
+  .typewrite_ongoing::after {
     @include caret(var(--color-secondary-light), "blink-caret-light")
   }
 
   :host-context(.dark) {
-    .line-1::after {
+    .typewrite_ongoing::after {
       @include caret(var(--color-secondary-dark), "blink-caret-dark")
     }
+  }
+
+  .typewrite_completed {
+    display: inline;
   }
 
   @keyframes blink-caret-dark {
