@@ -61,6 +61,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - run: go mod download
+        working-directory: ./infrastructure/pulumi
       - uses: pulumi/actions@v3
         with:
           command: up
