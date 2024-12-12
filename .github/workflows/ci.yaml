@@ -1,0 +1,69 @@
+name: Deploy website
+run-name: ${{ github.actor }} is deploying a new version of the website
+
+on:
+  push:
+    tags:
+      - "v*"
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache node modules
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        run: npm ci
+        working-directory: app
+
+      - name: Build Application
+        run: npm run ci:build
+        working-directory: app
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: app/dist/
+          retantion-days: 1
+
+  deploy:
+    name: Deploy website
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Retrieve artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: ./infrastructure/pulumi
+      - uses: actions/setup-go@v3
+        with:
+          go-version: "stable"
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - run: go mod download
+      - uses: pulumi/actions@v3
+        with:
+          command: up
+          stack-name: itsme
+          work-dir: ./infrastructure/pulumi
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
