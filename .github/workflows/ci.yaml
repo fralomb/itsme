@@ -65,7 +65,7 @@ jobs:
       - uses: pulumi/actions@v3
         with:
           command: up
-          stack-name: itsme/dev
+          stack-name: dev
           work-dir: ./infrastructure/pulumi
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
