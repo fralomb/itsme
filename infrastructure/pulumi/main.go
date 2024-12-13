@@ -80,7 +80,7 @@ func main() {
 
 		// Use a synced folder to manage the files of the website.
 		_, err = synced.NewS3BucketFolder(ctx, "app-folder", &synced.S3BucketFolderArgs{
-			Path:       pulumi.String("./dist"),
+			Path:       pulumi.String("./dist/app/browser"),
 			BucketName: bucket.Bucket,
 			Acl:        pulumi.String("public-read"),
 		}, pulumi.DependsOn([]pulumi.Resource{ownershipControls, publicAccessBlock, bucketWebsite}))
