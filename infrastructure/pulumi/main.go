@@ -13,6 +13,7 @@ func main() {
 		// Create an AWS resource (S3 Bucket)
 		bucket, err := s3.NewBucketV2(ctx, "itsme-website", &s3.BucketV2Args{
 			Bucket: pulumi.String("francesco-lombardo.it"),
+			Acl:    s3.CannedAclPublicRead,
 		})
 		if err != nil {
 			return err
@@ -82,7 +83,7 @@ func main() {
 			Path:       pulumi.String("./dist"),
 			BucketName: bucket.Bucket,
 			Acl:        pulumi.String("public-read"),
-		}, pulumi.DependsOn([]pulumi.Resource{ownershipControls, publicAccessBlock}))
+		}, pulumi.DependsOn([]pulumi.Resource{ownershipControls, publicAccessBlock, bucketWebsite}))
 		if err != nil {
 			return err
 		}

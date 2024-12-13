@@ -62,6 +62,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - run: go mod download
         working-directory: ./infrastructure/pulumi
+      - run: ls -la dist
+        working-directory: ./infrastructure/pulumi
       - uses: pulumi/actions@v6
         with:
           command: up
