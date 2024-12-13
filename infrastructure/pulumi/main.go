@@ -11,7 +11,12 @@ import (
 func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
 		// Create an AWS resource (S3 Bucket)
-		bucket, err := s3.NewBucketV2(ctx, "itsme-website", nil)
+		bucket, err := s3.NewBucketV2(ctx, "itsme-website", &s3.BucketV2Args{
+			Bucket: pulumi.String("francesco-lombardo.it"),
+		})
+		if err != nil {
+			return err
+		}
 
 		bucketWebsite, err := s3.NewBucketWebsiteConfigurationV2(ctx, "itsme-website", &s3.BucketWebsiteConfigurationV2Args{
 			Bucket: bucket.Bucket,
