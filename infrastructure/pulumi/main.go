@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/s3"
+	"github.com/pulumi/pulumi-cloudflare/sdk/v5/go/cloudflare"
 	synced "github.com/pulumi/pulumi-synced-folder/sdk/go/synced-folder"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -84,6 +85,24 @@ func main() {
 			BucketName: bucket.Bucket,
 			Acl:        pulumi.String("public-read"),
 		}, pulumi.DependsOn([]pulumi.Resource{ownershipControls, publicAccessBlock, bucketWebsite}))
+		if err != nil {
+			return err
+		}
+
+		// Setup Cloudflare DNS record
+		cf_zone, err := cloudflare.LookupZone(ctx, &cloudflare.LookupZoneArgs{
+			Name: pulumi.StringRef("francesco-lombardo.it"),
+		}, nil)
+		if err != nil {
+			return err
+		}
+		_, err = cloudflare.NewRecord(ctx, "root", &cloudflare.RecordArgs{
+			ZoneId:  pulumi.String(cf_zone.Id),
+			Name:    pulumi.String("@"),
+			Content: bucketWebsite.WebsiteEndpoint,
+			Type:    pulumi.String("CNAME"),
+			Proxied: pulumi.Bool(true),
+		})
 		if err != nil {
 			return err
 		}
