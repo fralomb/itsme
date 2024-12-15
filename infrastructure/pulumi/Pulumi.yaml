@@ -1,0 +1,7 @@
+name: itsme
+description: Iac code for deploying personal portfolio as a static webpage in AWS
+runtime: go
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-go
