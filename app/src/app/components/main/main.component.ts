@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { TypewriterService } from '../../services/typewriter.service';
+import { AnalyticsService } from '../../services/analytics.service';
 import { concat, delay } from 'rxjs';
 
 @Component({
@@ -19,7 +20,7 @@ export class MainComponent implements AfterViewInit {
   private text_speed: number = 150;
   private text_speed_faster: number = 100;
 
-  constructor(private typewriterService: TypewriterService, private renderer: Renderer2) {}
+  constructor(private typewriterService: TypewriterService, private renderer: Renderer2, private analytics: AnalyticsService) {}
 
   ngAfterViewInit() {
     if (this.line1 && this.line2 && this.line3 && this.line4 && this.line5) {
@@ -74,6 +75,7 @@ export class MainComponent implements AfterViewInit {
         },
         complete: () => {
           // console.log("Observable complete");
+          this.analytics.trackEvent("ANIMATION_FINISHED", "Measures the level of interest, the whole description has been read", "INTEREST")
         },
       });
     }

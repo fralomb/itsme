@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DarkModeService } from './../../services/dark-mode.service';
 import { LocalStorageService } from './../../services/local-storage.service';
+import { AnalyticsService } from './../../services/analytics.service';
 
 @Component({
   selector: 'app-nav',
@@ -13,7 +14,7 @@ export class NavComponent implements OnInit {
   isDarkModeEnabled: boolean = false;
   preferencesKey: string = "DarkMode"
 
-  constructor(private darkModeService: DarkModeService, private localStorageService: LocalStorageService) {}
+  constructor(private darkModeService: DarkModeService, private localStorageService: LocalStorageService, private analytics: AnalyticsService) {}
 
   ngOnInit() {
     // init theme based on preferences (if any yet)
@@ -32,6 +33,7 @@ export class NavComponent implements OnInit {
 
   toggleDarkMode() {
     this.darkModeService.setDarkMode(!this.isDarkModeEnabled);
+    this.analytics.trackEvent(this.isDarkModeEnabled ? "DARK_MODE" : "LIGHT_MODE", "Measures the level of interest, the dark mode toggle has been used", "INTEREST")
   }
 
 }

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AnalyticsService } from './../../services/analytics.service';
 
 @Component({
   selector: 'app-footer',
@@ -8,10 +9,12 @@ import { Component } from '@angular/core';
   styleUrl: './footer.component.scss'
 })
 export class FooterComponent {
-  currentYear: number = 0;
 
-  constructor() {
-    this.currentYear = new Date().getFullYear();
+  constructor(private analytics: AnalyticsService) {
+  }
+
+  onClick(type: string) {
+    this.analytics.trackEvent(type.toUpperCase(), "Measures the number of interactions with the social buttons", "SOCIAL")
   }
 
 }
