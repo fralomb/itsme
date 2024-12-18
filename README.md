@@ -4,7 +4,7 @@
 This repository houses the source code and infrastructure configuration for my personal portfolio website. Below an overview of the key aspects:
 
 - **Frontend:** Built using `Angular` and styled with `Tailwind CSS` for a responsive and customizable design;
-- **Hosting:** The application leverages Amazon Web Services (AWS) infrastructure. The static website content is stored in an `S3 bucket`, providing a scalable and highly available hosting solution. `CloudFront` is utilized as a CDN to ensure low-latency access for users worldwide, while `Route 53` manages the domain routing;
+- **Hosting:** The application leverages Amazon Web Services (AWS) infrastructure. The static website content is stored in an `S3 bucket`, providing a scalable and highly available hosting solution. `Cloudflare` is utilized as a CDN to ensure low-latency access for users worldwide;
 - **IaC:** The infrastructure is managed entirely as code using `Pulumi` as IaC tool, ensuring consistent and version-controlled infrastructure. Pulumi allows for the definition of complex cloud architectures using familiar programming languages, facilitating easier maintenance and evolution of the infrastructure;
 - **CI/CD:** Utilizes `GitHub Actions` to define a pipeline for deploying both the updated website content and any infrastructure changes to AWS. This ensures that the live website always reflects the latest changes in the repository.
 

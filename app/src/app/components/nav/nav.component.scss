@@ -38,6 +38,10 @@
     stroke: var(--icon-fill-sun);
     stroke-width: 2px;
   }
+
+  .logo > a:hover {
+    text-shadow: 5px 4px 7px var(--color-secondary-dark-hover);
+  }
 }
 
 :host-context(.light) {
@@ -66,6 +70,10 @@
       cx: 17;
       transform: translateX(0);
     }
+  }
+
+  .logo > a:hover {
+    text-shadow: 5px 4px 7px var(--color-secondary-light-hover);
   }
 }
 
