@@ -60,13 +60,16 @@ func main() {
 					"Version": "2012-10-17",
 					"Statement": []interface{}{
 						map[string]interface{}{
-							"Sid":       "PublicReadGetObject",
-							"Effect":    "Allow",
+							"Sid":       "RestrictAccessOnlyToCloudflareIps",
+							"Effect":    "Deny",
 							"Principal": "*",
 							"Action":    "s3:GetObject",
-							"Resource":  "arn:aws:s3:::" + bucketName + "/*",
+							"Resource": []string{
+								"arn:aws:s3:::" + bucketName,
+								"arn:aws:s3:::" + bucketName + "/*",
+							},
 							"Condition": map[string]interface{}{
-								"IpAddress": map[string]interface{}{
+								"NotIpAddress": map[string]interface{}{
 									"aws:SourceIp": []string{
 										"173.245.48.0/20",
 										"103.21.244.0/22",
