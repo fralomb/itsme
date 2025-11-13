@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, Renderer2, ChangeDetectorRef } from '@angular/core';
 import { TypewriterService } from '../../services/typewriter.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { concat, delay, Subscription } from 'rxjs';
@@ -25,7 +25,12 @@ export class MainComponent implements AfterViewInit {
   // Public property to control skip button visibility
   public showSkipButton: boolean = false;
 
-  constructor(private typewriterService: TypewriterService, private renderer: Renderer2, private analytics: AnalyticsService) {}
+  constructor(
+    private typewriterService: TypewriterService,
+    private renderer: Renderer2,
+    private analytics: AnalyticsService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngAfterViewInit() {
     if (this.line1 && this.line2 && this.line3 && this.line4 && this.line5) {
@@ -33,6 +38,8 @@ export class MainComponent implements AfterViewInit {
 
       // Show skip button when animation starts
       this.showSkipButton = true;
+      // Manually trigger change detection since we're in ngAfterViewInit
+      this.cdr.detectChanges();
 
       const line1$ = this.typewriterService.typeText(this.line1, this.text_speed);
       const line2$ = this.typewriterService.typeText(this.line2, this.text_speed);
