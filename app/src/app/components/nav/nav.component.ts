@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { DarkModeService } from './../../services/dark-mode.service';
 import { LocalStorageService } from './../../services/local-storage.service';
 import { AnalyticsService } from './../../services/analytics.service';
@@ -14,7 +15,16 @@ export class NavComponent implements OnInit {
   isDarkModeEnabled: boolean = false;
   preferencesKey: string = "DarkMode"
 
-  constructor(private darkModeService: DarkModeService, private localStorageService: LocalStorageService, private analytics: AnalyticsService) {}
+  // Theme colors matching styles.scss
+  private readonly DARK_THEME_COLOR = '#212529';
+  private readonly LIGHT_THEME_COLOR = '#E6F1FF';
+
+  constructor(
+    private darkModeService: DarkModeService,
+    private localStorageService: LocalStorageService,
+    private analytics: AnalyticsService,
+    @Inject(DOCUMENT) private document: Document
+  ) {}
 
   ngOnInit() {
     // init theme based on preferences (if any yet)
@@ -27,6 +37,8 @@ export class NavComponent implements OnInit {
       if(isDarkMode !== this.isDarkModeEnabled) {
         this.isDarkModeEnabled = isDarkMode;
         this.localStorageService.setItem(this.preferencesKey, isDarkMode);
+        // Update theme-color meta tag for mobile browsers
+        this.updateThemeColor(isDarkMode);
       }
     });
   }
@@ -34,6 +46,28 @@ export class NavComponent implements OnInit {
   toggleDarkMode() {
     this.darkModeService.setDarkMode(!this.isDarkModeEnabled);
     this.analytics.trackEvent(this.isDarkModeEnabled ? "DARK_MODE" : "LIGHT_MODE", "Measures the level of interest, the dark mode toggle has been used", "INTEREST")
+  }
+
+  /**
+   * Updates the theme-color meta tag to match the current theme
+   * This fixes the white bar issue on mobile browser bars
+   */
+  private updateThemeColor(isDarkMode: boolean): void {
+    const themeColor = isDarkMode ? this.DARK_THEME_COLOR : this.LIGHT_THEME_COLOR;
+
+    // Update existing theme-color meta tags
+    const metaTags = this.document.querySelectorAll('meta[name="theme-color"]');
+    metaTags.forEach((tag) => {
+      tag.setAttribute('content', themeColor);
+    });
+
+    // If no theme-color meta tag exists, create one
+    if (metaTags.length === 0) {
+      const meta = this.document.createElement('meta');
+      meta.name = 'theme-color';
+      meta.content = themeColor;
+      this.document.head.appendChild(meta);
+    }
   }
 
 }

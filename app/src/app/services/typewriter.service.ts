@@ -42,8 +42,28 @@ export class TypewriterService {
 
     return new Observable<any>(observer => {
       let currentIndex = 0;
+      let intervalId: any;
 
-      const intervalId = setInterval(() => {
+      // Method to skip the animation
+      const skip = () => {
+        if (intervalId) {
+          clearInterval(intervalId);
+          // Emit the full content
+          const fullHTML = this.buildHTMLFromChars(allCharacters);
+          observer.next({
+            message: fullHTML,
+            elem: elem,
+            isFirstChar: currentIndex === 0,
+            skipped: true
+          });
+          observer.complete();
+        }
+      };
+
+      // Store skip function in observer for external access
+      (observer as any).skip = skip;
+
+      intervalId = setInterval(() => {
         if (currentIndex < allCharacters.length) {
           // Get all characters up to the current index
           const currentChars = allCharacters.slice(0, currentIndex + 1);
@@ -52,7 +72,8 @@ export class TypewriterService {
           observer.next({
             message: currentHTML,
             elem: elem,
-            isFirstChar: currentIndex === 0
+            isFirstChar: currentIndex === 0,
+            skipped: false
           });
 
           currentIndex++;
@@ -61,6 +82,13 @@ export class TypewriterService {
           observer.complete();
         }
       }, speed);
+
+      // Return cleanup function
+      return () => {
+        if (intervalId) {
+          clearInterval(intervalId);
+        }
+      };
     });
   }
 
