@@ -66,7 +66,7 @@
 // Skip Animation Button
 .skip-button {
   position: fixed;
-  bottom: 2rem;
+  bottom: 8vh; // Viewport-relative positioning for consistent placement across devices
   right: 2rem;
   display: flex;
   align-items: center;
@@ -82,7 +82,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  z-index: 9999; // High z-index ensures button is always above footer and other elements
 
   &:hover {
     transform: translateY(-2px);
@@ -105,9 +105,15 @@
     font-family: inherit;
   }
 
+  // Tablet responsiveness - adjusted spacing for medium screens
+  @media (max-width: 1024px) and (min-width: 769px) {
+    bottom: 10vh;
+    right: 1.5rem;
+  }
+
   // Mobile responsiveness - increased bottom spacing to avoid footer overlap
   @media (max-width: 768px) {
-    bottom: 7rem;
+    bottom: 12vh; // Higher positioning on mobile to clear footer
     right: 1rem;
     padding: 0.6rem 1rem;
     font-size: 0.85rem;
@@ -116,6 +122,12 @@
       width: 16px;
       height: 16px;
     }
+  }
+
+  // Very small screens - extra clearance for footer
+  @media (max-width: 480px) {
+    bottom: 15vh;
+    right: 0.75rem;
   }
 }
 
