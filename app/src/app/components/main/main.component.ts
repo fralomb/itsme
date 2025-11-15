@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, ElementRef, Renderer2, ChangeDetectorRef } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, Renderer2, ChangeDetectorRef } from '@angular/core';
 import { TypewriterService } from '../../services/typewriter.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { concat, delay, Subscription } from 'rxjs';
@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss',
 })
-export class MainComponent implements AfterViewInit {
+export class MainComponent implements AfterViewInit, OnDestroy {
   @ViewChild('line1') line1: ElementRef | undefined;
   @ViewChild('line2') line2: ElementRef | undefined;
   @ViewChild('line3') line3: ElementRef | undefined;
@@ -114,41 +114,29 @@ export class MainComponent implements AfterViewInit {
   }
 
   skipAnimation() {
-    if (this.animationSubscription) {
-      // Complete all animations immediately by showing all content
-      this.completeAllAnimations();
+    // Enable fast-forward mode - animations will continue at high speed (5ms)
+    this.typewriterService.enableFastForward();
 
-      // Unsubscribe from the animation
-      this.animationSubscription.unsubscribe();
+    // Track skip event
+    this.analytics.trackEvent("ANIMATION_SKIPPED", "User fast-forwarded the typewriter animation", "INTERACTION");
 
-      // Hide the skip button
-      this.showSkipButton = false;
-
-      // Track skip event
-      this.analytics.trackEvent("ANIMATION_SKIPPED", "User skipped the typewriter animation", "INTERACTION");
-    }
-  }
-
-  private completeAllAnimations() {
-    // Show all lines immediately with completed state
-    const lines = [this.line1, this.line2, this.line3, this.line4, this.line5];
-
-    lines.forEach((line) => {
-      if (line) {
-        // Remove ongoing class and add completed class
-        this.renderer.removeClass(line.nativeElement, 'typewrite_ongoing');
-        this.renderer.addClass(line.nativeElement, 'typewrite_completed');
-
-        // Make the line visible
-        this.renderer.setStyle(line.nativeElement, 'display', 'inline');
-      }
-    });
+    // Note: Button will be hidden automatically when animation completes
+    // via the complete callback in the subscription (line 109)
   }
 
   switchTypewriteClass(elemPrev: ElementRef | undefined, elemNext: ElementRef | undefined) {
       this.renderer.removeClass(elemPrev!.nativeElement, 'typewrite_ongoing');
       this.renderer.addClass(elemPrev!.nativeElement, 'typewrite_completed');
       this.renderer.addClass(elemNext!.nativeElement, 'typewrite_ongoing');
+  }
+
+  ngOnDestroy() {
+    // Clean up subscription
+    if (this.animationSubscription) {
+      this.animationSubscription.unsubscribe();
+    }
+    // Reset fast-forward mode in service
+    this.typewriterService.resetFastForward();
   }
 
 }

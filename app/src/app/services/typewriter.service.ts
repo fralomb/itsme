@@ -1,5 +1,5 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 interface TextNode {
   type: 'text';
@@ -21,8 +21,28 @@ interface TextSequence {
   providedIn: 'root'
 })
 export class TypewriterService {
+  private fastForwardSpeed = 5; // Very fast speed for fast-forward mode (5ms)
+  private isFastForwardMode = false;
+  private activeObservers: any[] = [];
 
   constructor() { }
+
+  // Enable fast-forward mode for all active and future animations
+  enableFastForward() {
+    this.isFastForwardMode = true;
+    // Trigger fast-forward on all currently active observers
+    this.activeObservers.forEach(observer => {
+      if (observer.fastForward) {
+        observer.fastForward(this.fastForwardSpeed);
+      }
+    });
+  }
+
+  // Reset fast-forward mode (for future animations)
+  resetFastForward() {
+    this.isFastForwardMode = false;
+    this.activeObservers = [];
+  }
 
   typeText(elem: ElementRef, speed: number = 100): Observable<any> {
     const htmlString: string = elem.nativeElement.innerHTML;
@@ -43,8 +63,9 @@ export class TypewriterService {
     return new Observable<any>(observer => {
       let currentIndex = 0;
       let intervalId: any;
+      let currentSpeed = this.isFastForwardMode ? this.fastForwardSpeed : speed;
 
-      // Method to skip the animation
+      // Method to skip the animation (instant completion)
       const skip = () => {
         if (intervalId) {
           clearInterval(intervalId);
@@ -60,8 +81,45 @@ export class TypewriterService {
         }
       };
 
-      // Store skip function in observer for external access
+      // Method to fast-forward the animation (very fast typing)
+      const fastForward = (newSpeed: number = 5) => {
+        if (intervalId && currentIndex < allCharacters.length) {
+          clearInterval(intervalId);
+          currentSpeed = newSpeed;
+
+          // Restart interval with faster speed
+          intervalId = setInterval(() => {
+            if (currentIndex < allCharacters.length) {
+              const currentChars = allCharacters.slice(0, currentIndex + 1);
+              const currentHTML = this.buildHTMLFromChars(currentChars);
+
+              observer.next({
+                message: currentHTML,
+                elem: elem,
+                isFirstChar: false,
+                skipped: false
+              });
+
+              currentIndex++;
+            } else {
+              clearInterval(intervalId);
+              // Remove from active observers when complete
+              const index = this.activeObservers.indexOf(observer);
+              if (index > -1) {
+                this.activeObservers.splice(index, 1);
+              }
+              observer.complete();
+            }
+          }, currentSpeed);
+        }
+      };
+
+      // Store skip and fastForward functions in observer for external access
       (observer as any).skip = skip;
+      (observer as any).fastForward = fastForward;
+
+      // Register this observer as active
+      this.activeObservers.push(observer);
 
       intervalId = setInterval(() => {
         if (currentIndex < allCharacters.length) {
@@ -79,14 +137,24 @@ export class TypewriterService {
           currentIndex++;
         } else {
           clearInterval(intervalId);
+          // Remove from active observers when complete
+          const index = this.activeObservers.indexOf(observer);
+          if (index > -1) {
+            this.activeObservers.splice(index, 1);
+          }
           observer.complete();
         }
-      }, speed);
+      }, currentSpeed);
 
       // Return cleanup function
       return () => {
         if (intervalId) {
           clearInterval(intervalId);
+        }
+        // Remove from active observers on cleanup
+        const index = this.activeObservers.indexOf(observer);
+        if (index > -1) {
+          this.activeObservers.splice(index, 1);
         }
       };
     });
