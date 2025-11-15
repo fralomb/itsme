@@ -114,14 +114,14 @@ export class MainComponent implements AfterViewInit, OnDestroy {
   }
 
   skipAnimation() {
+    // Hide skip button immediately
+    this.showSkipButton = false;
+
     // Enable fast-forward mode - animations will continue at high speed (5ms)
     this.typewriterService.enableFastForward();
 
     // Track skip event
     this.analytics.trackEvent("ANIMATION_SKIPPED", "User fast-forwarded the typewriter animation", "INTERACTION");
-
-    // Note: Button will be hidden automatically when animation completes
-    // via the complete callback in the subscription (line 109)
   }
 
   switchTypewriteClass(elemPrev: ElementRef | undefined, elemNext: ElementRef | undefined) {
