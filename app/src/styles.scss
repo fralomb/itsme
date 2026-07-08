@@ -13,5 +13,25 @@
     --color-accent-light: #155084;
     --color-accent-dark: #87A8A8;
 
+    /* terminal / hero tokens */
+    --color-fg-light: #14202b;
+    --color-fg-dark: #e9edf0;
+    --color-card-light: #ffffff;
+    --color-card-dark: #202529;
+    --color-border-light: #c3d9f0;
+    --color-border-dark: #333a3f;
+    --color-muted-light: #5a7188;
+    --color-muted-dark: #8a9aa0;
+    --color-bg-tint-light: #d8e8fb;
+    --color-bg-tint-dark: #22272b;
+    --color-ok-light: #2f8f6f;
+    --color-ok-dark: #6fbf9c;
+    --color-bad-light: #c0392b;
+    --color-bad-dark: #e5484d;
+  }
+
+  body {
+    position: relative;
+    overflow-x: hidden;
   }
 }

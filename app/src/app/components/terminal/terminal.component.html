@@ -1,0 +1,49 @@
+<div
+  class="term"
+  #termEl
+  [class.revealed]="revealed"
+  [class.maximized]="maximized"
+  [class.minimized]="minimized"
+  [class.closed]="closed"
+>
+  <div
+    class="term-bar"
+    (pointerdown)="onPointerDown($event)"
+    (pointermove)="onPointerMove($event)"
+    (pointerup)="onPointerUp()"
+    (pointercancel)="onPointerUp()"
+  >
+    <div class="traffic-lights">
+      <button class="tl tl-close" (click)="onClose($event)" aria-label="Close terminal">
+        <svg viewBox="0 0 8 8"><path d="M1 1L7 7M7 1L1 7" stroke="#5c0e0a" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+      <button class="tl tl-min" (click)="onMinimizeToggle($event)" aria-label="Minimize terminal">
+        <svg viewBox="0 0 8 8"><path d="M1 4H7" stroke="#6b4a05" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+      <button class="tl tl-max" (click)="onMaximizeToggle($event)" aria-label="Maximize terminal">
+        <svg viewBox="0 0 8 8"><path d="M1.5 5.5L5.5 1.5M2 1.5H5.5V5" stroke="#0d4d1c" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      </button>
+    </div>
+    <span class="term-title">francesco&#64;lombardo: ~</span>
+  </div>
+
+  <div class="term-output" #termOutput aria-live="polite"></div>
+
+  <div class="term-input-row" (click)="focusInput()">
+    <span class="prompt">francesco&#64;lombardo:~$</span>
+    <div class="cmd-wrap">
+      <div class="cmd-display" #cmdDisplay aria-hidden="true"></div>
+      <input
+        #cmdInput
+        type="text"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        aria-label="Terminal command input"
+        placeholder="tab for autocompletion"
+        (input)="updateSuggestion()"
+        (keydown)="onKeydown($event)"
+      >
+    </div>
+  </div>
+</div>
