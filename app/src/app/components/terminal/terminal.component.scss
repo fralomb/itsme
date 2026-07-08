@@ -188,19 +188,25 @@
   }
 }
 
-:host-context(.dark) {
-  .term {
-    background: var(--color-card-dark);
-    border-color: var(--color-border-dark);
-    color: var(--color-fg-dark);
-  }
+// The .term element is reparented to <body> at runtime (see TerminalComponent.ngAfterViewInit)
+// so it can be dragged anywhere on the page - which also takes it outside <app-root>, the
+// element that actually carries the .dark/.light class. :host-context(.dark) depends on that
+// ancestry and would never match once reparented, so dark mode is tracked explicitly via
+// DarkModeService instead and applied as a plain class directly on .term.
+.term.dark {
+  background: var(--color-card-dark);
+  border-color: var(--color-border-dark);
+  color: var(--color-fg-dark);
+
   .term-bar {
     background: var(--color-bg-tint-dark);
     border-bottom-color: var(--color-border-dark);
   }
+
   .term-title {
     color: var(--color-muted-dark);
   }
+
   .term-output ::ng-deep {
     .muted { color: var(--color-muted-dark); }
     .accent { color: var(--color-secondary-dark-hover); }
@@ -208,6 +214,7 @@
     a { color: var(--color-secondary-dark-hover); }
     .commit-hash { color: var(--color-secondary-dark); }
   }
+
   .term-input-row {
     border-top-color: var(--color-border-dark);
 
@@ -223,6 +230,7 @@
       }
     }
   }
+
   .cmd-display ::ng-deep {
     .typed-ok { color: var(--color-ok-dark); }
     .typed-bad { color: var(--color-bad-dark); }

@@ -7,12 +7,15 @@ import {
   Inject,
   Input,
   OnDestroy,
+  OnInit,
   Output,
   Renderer2,
   ViewChild,
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { AnalyticsService } from '../../services/analytics.service';
+import { DarkModeService } from '../../services/dark-mode.service';
 
 /**
  * Interactive, typeable terminal shell. Ported from the approved v6b mockup:
@@ -30,7 +33,7 @@ import { AnalyticsService } from '../../services/analytics.service';
   templateUrl: './terminal.component.html',
   styleUrl: './terminal.component.scss',
 })
-export class TerminalComponent implements AfterViewInit, OnDestroy {
+export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Element the terminal uses to compute its default resting position. */
   @Input() anchor?: HTMLElement;
 
@@ -47,10 +50,17 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
   minimized = false;
   maximized = false;
 
+  // The .term element gets reparented to <body> (see ngAfterViewInit) so it's no longer a
+  // descendant of <app-root>, which is what actually carries the .dark/.light class. That
+  // breaks CSS :host-context(.dark) matching, so dark mode is tracked explicitly here instead
+  // and applied via a plain [class.dark] binding on the (now body-level) .term element.
+  isDarkModeEnabled = false;
+
   private prevRect: { left: string; top: string; width: string } | null = null;
   private dragOffset: { x: number; y: number } | null = null;
   private dragMoved = false;
   private currentSuggestion: string | null = null;
+  private darkModeSub?: Subscription;
 
   private readonly knownCommands = [
     'help', 'whoami', 'aboutme', 'skills', 'history', 'contact', 'clear',
@@ -98,8 +108,15 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
   constructor(
     private analytics: AnalyticsService,
     private renderer: Renderer2,
+    private darkModeService: DarkModeService,
     @Inject(DOCUMENT) private document: Document,
   ) {}
+
+  ngOnInit(): void {
+    this.darkModeSub = this.darkModeService.getDarkMode().subscribe((isDarkMode) => {
+      this.isDarkModeEnabled = isDarkMode;
+    });
+  }
 
   ngAfterViewInit(): void {
     // Move the terminal to the very end of <body> so it can be dragged into
@@ -109,6 +126,7 @@ export class TerminalComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.darkModeSub?.unsubscribe();
     if (this.termEl?.nativeElement?.parentNode) {
       this.termEl.nativeElement.parentNode.removeChild(this.termEl.nativeElement);
     }

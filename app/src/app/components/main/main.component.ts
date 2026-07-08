@@ -63,6 +63,10 @@ export class MainComponent implements AfterViewInit, OnDestroy {
     this.showSkipButton = false;
     this.analytics.trackEvent('ANIMATION_FINISHED', 'Measures the level of interest, the whole description has been read', 'INTEREST');
     this.revealTerminal();
+    // This resolves at the end of a chain of setTimeout callbacks with no template event
+    // attached to it, so under the app root's OnPush strategy it would otherwise never
+    // reach the DOM until some unrelated click happened to trigger change detection.
+    this.cdr.detectChanges();
   }
 
   skipAnimation(): void {
