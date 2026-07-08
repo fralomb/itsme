@@ -1,7 +1,27 @@
 <div class="wrapper">
-  <p class="line-1" #line1>Hello, my name is</p>
-  <h2 class="line-2" #line2>Francesco Lombardo.</h2>
-  <p class="line-3" #line3>I'm an experienced</p>
-  <h2 class="line-4" #line4>Cloud & Devops Engineer.</h2>
-  <p class="line-5" #line5>I’ve a consolidated experience in designing and implementing scalable <strong>AWS cloud architectures</strong>. I've developed significant proficiency in <strong>Kubernetes</strong> orchestration, <strong>Terraform</strong> infrastructure-as-code deployment, and advanced <strong>DevOps</strong> methodologies.</p>
+  <div class="hero">
+    <p class="intro-eyebrow" #introEyebrow></p>
+    <h1 class="intro-headline" #introHeadline></h1>
+    <p class="intro-tagline" #introTagline></p>
+  </div>
+
+  <!-- Skip Animation Button -->
+  <button *ngIf="showSkipButton" class="skip-anim" (click)="skipAnimation()" aria-label="Skip animation">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="5 4 15 12 5 20 5 4"></polygon>
+      <line x1="19" y1="5" x2="19" y2="19"></line>
+    </svg>
+    <span>Skip</span>
+  </button>
+
+  <!-- Reserves vertical room for the terminal's resting position; also hosts the
+       "reconnect session" chip once the terminal has been closed. The terminal itself
+       lives at <body> level (see app-terminal) so it can be dragged anywhere on the page. -->
+  <div class="term-stage" #termStage>
+    <button class="reopen-chip" [class.show]="terminalClosed" (click)="reopenTerminal()">
+      <span>▸</span> reconnect session
+    </button>
+  </div>
+
+  <app-terminal [anchor]="termStage" (closedChange)="onTerminalClosedChange($event)"></app-terminal>
 </div>

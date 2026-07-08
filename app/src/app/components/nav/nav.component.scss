@@ -3,7 +3,29 @@
 }
 
 .logo {
-  @apply font-sign text-5xl flex-grow;
+  @apply flex-grow;
+  font-weight: 500;
+  font-size: 1.4rem;
+  text-decoration: none;
+  color: var(--color-fg-light);
+
+  .accent {
+    color: var(--color-secondary-light);
+  }
+
+  .blink {
+    color: var(--color-secondary-light);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .logo .blink {
+    animation: blink-cursor 1s step-end infinite;
+  }
+}
+
+@keyframes blink-cursor {
+  50% { opacity: 0; }
 }
 
 .theme-toggle {
@@ -39,7 +61,15 @@
     stroke-width: 2px;
   }
 
-  .logo > a:hover {
+  .logo {
+    color: var(--color-fg-dark);
+
+    .accent, .blink {
+      color: var(--color-secondary-dark);
+    }
+  }
+
+  .logo:hover {
     text-shadow: 5px 4px 7px var(--color-secondary-dark-hover);
   }
 }
@@ -72,7 +102,7 @@
     }
   }
 
-  .logo > a:hover {
+  .logo:hover {
     text-shadow: 5px 4px 7px var(--color-secondary-light-hover);
   }
 }

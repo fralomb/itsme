@@ -1,0 +1,239 @@
+.term {
+  position: absolute;
+  width: min(640px, 92vw);
+  background: var(--color-card-light);
+  border: 1px solid var(--color-border-light);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -28px rgba(20, 32, 43, .3);
+  opacity: 0;
+  z-index: 15;
+  font-family: 'Fira Code', ui-monospace, monospace;
+  color: var(--color-fg-light);
+
+  &:not(.revealed) {
+    pointer-events: none;
+  }
+
+  &.revealed {
+    animation: termIn .4s ease forwards;
+  }
+
+  // maximize pins to the viewport (like a real window manager), everything else stays page-relative
+  &.maximized {
+    position: fixed !important;
+    left: 3vw !important;
+    top: 3vh !important;
+    width: 94vw !important;
+
+    .term-output {
+      height: calc(90vh - 96px) !important;
+    }
+  }
+
+  &.minimized {
+    .term-output, .term-input-row {
+      display: none;
+    }
+  }
+
+  &.closed {
+    display: none;
+  }
+}
+
+@keyframes termIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .6rem .85rem;
+  background: var(--color-bg-tint-light);
+  border-bottom: 1px solid var(--color-border-light);
+  cursor: grab;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// dragging is disabled on touch devices, so don't advertise it with a grab cursor there
+@media (pointer: coarse) {
+  .term-bar, .term-bar:active {
+    cursor: default;
+  }
+}
+
+.traffic-lights {
+  display: flex;
+  gap: .5rem;
+
+  &:hover .tl svg {
+    opacity: 1;
+  }
+}
+
+.tl {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  svg {
+    width: 7px;
+    height: 7px;
+    opacity: 0;
+    transition: opacity .12s ease;
+  }
+}
+
+.tl-close { background: #ff5f57; &:hover { background: #ff453a; } }
+.tl-min { background: #febc2e; &:hover { background: #ffcc4d; } }
+.tl-max { background: #28c840; &:hover { background: #32d74b; } }
+
+.term-title {
+  margin-left: .35rem;
+  font-size: .72rem;
+  color: var(--color-muted-light);
+}
+
+.term-output {
+  height: 230px;
+  overflow-y: auto;
+  padding: 1.05rem 1.15rem;
+  font-size: .85rem;
+  line-height: 1.8;
+
+  // content inside is injected via native DOM (innerHTML), so it never receives Angular's
+  // scoped _ngcontent attribute - ::ng-deep is required for these rules to reach it.
+  ::ng-deep {
+    .block { margin-bottom: .85rem; }
+    .block:last-child { margin-bottom: 0; }
+    .muted { color: var(--color-muted-light); }
+    .accent { color: var(--color-secondary-light-hover); }
+    .cmd-name { display: inline-block; min-width: 10ch; }
+    .echo .prompt { color: var(--color-secondary-light); }
+    a { color: var(--color-secondary-light-hover); }
+    pre { margin: 0; font-family: inherit; white-space: pre-wrap; }
+    .commit-hash { color: var(--color-secondary-light); }
+  }
+}
+
+.term-input-row {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .8rem 1.15rem;
+  border-top: 1px solid var(--color-border-light);
+  font-size: .88rem;
+
+  .prompt {
+    color: var(--color-secondary-light);
+    white-space: nowrap;
+  }
+}
+
+// cmd-wrap stacks a read-only "display" layer (colored typed text + a dim ghost completion)
+// directly under the real <input>. The input's own text is made transparent so only the
+// colored layer shows, while its native caret (still visible via caret-color) keeps blinking
+// in exactly the right spot since both layers share the same font metrics.
+.cmd-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.cmd-display {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  white-space: pre;
+  overflow: hidden;
+  font-family: inherit;
+  font-size: inherit;
+  pointer-events: none;
+
+  ::ng-deep {
+    .typed-ok { color: var(--color-ok-light); }
+    .typed-bad { color: var(--color-bad-light); }
+    .ghost { color: var(--color-muted-light); opacity: .6; }
+  }
+}
+
+.term-input-row input {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  caret-color: var(--color-secondary-light);
+
+  &::placeholder {
+    color: var(--color-muted-light);
+  }
+}
+
+// The .term element is reparented to <body> at runtime (see TerminalComponent.ngAfterViewInit)
+// so it can be dragged anywhere on the page - which also takes it outside <app-root>, the
+// element that actually carries the .dark/.light class. :host-context(.dark) depends on that
+// ancestry and would never match once reparented, so dark mode is tracked explicitly via
+// DarkModeService instead and applied as a plain class directly on .term.
+.term.dark {
+  background: var(--color-card-dark);
+  border-color: var(--color-border-dark);
+  color: var(--color-fg-dark);
+
+  .term-bar {
+    background: var(--color-bg-tint-dark);
+    border-bottom-color: var(--color-border-dark);
+  }
+
+  .term-title {
+    color: var(--color-muted-dark);
+  }
+
+  .term-output ::ng-deep {
+    .muted { color: var(--color-muted-dark); }
+    .accent { color: var(--color-secondary-dark-hover); }
+    .echo .prompt { color: var(--color-secondary-dark); }
+    a { color: var(--color-secondary-dark-hover); }
+    .commit-hash { color: var(--color-secondary-dark); }
+  }
+
+  .term-input-row {
+    border-top-color: var(--color-border-dark);
+
+    .prompt {
+      color: var(--color-secondary-dark);
+    }
+
+    input {
+      caret-color: var(--color-secondary-dark);
+
+      &::placeholder {
+        color: var(--color-muted-dark);
+      }
+    }
+  }
+
+  .cmd-display ::ng-deep {
+    .typed-ok { color: var(--color-ok-dark); }
+    .typed-bad { color: var(--color-bad-dark); }
+    .ghost { color: var(--color-muted-dark); }
+  }
+}

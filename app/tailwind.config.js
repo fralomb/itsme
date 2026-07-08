@@ -12,7 +12,6 @@ module.exports = {
         sans: ['"Fira Code"', ...defaultTheme.fontFamily.sans],
         poppins: ["Poppins", "sans-serif"],
         fira: ["Fira Code", "monospace"],
-        sign: ["Babylonica", "cursive"],
       },
       colors: {
         'main-light-hover': 'var(--color-secondary-light-hover)',
@@ -23,6 +22,18 @@ module.exports = {
         'bg-dark': 'var(--color-primary-dark)',
         'highlight-light': 'var(--color-accent-light)',
         'highlight-dark': 'var(--color-accent-dark)',
+        'card-light': 'var(--color-card-light)',
+        'card-dark': 'var(--color-card-dark)',
+        'border-light': 'var(--color-border-light)',
+        'border-dark': 'var(--color-border-dark)',
+        'muted-light': 'var(--color-muted-light)',
+        'muted-dark': 'var(--color-muted-dark)',
+        'bg-tint-light': 'var(--color-bg-tint-light)',
+        'bg-tint-dark': 'var(--color-bg-tint-dark)',
+        'ok-light': 'var(--color-ok-light)',
+        'ok-dark': 'var(--color-ok-dark)',
+        'bad-light': 'var(--color-bad-light)',
+        'bad-dark': 'var(--color-bad-dark)',
       }
     }
   },
