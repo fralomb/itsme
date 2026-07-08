@@ -88,6 +88,9 @@ func main() {
 										"131.0.72.0/22",
 									},
 								},
+								"StringNotEquals": map[string]interface{}{
+									"aws:PrincipalType": []string{"User", "AssumedRole", "FederatedUser"},
+								},
 							},
 						},
 					},
